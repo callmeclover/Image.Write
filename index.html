@@ -1,69 +1,62 @@
-<html><head><title>File.Write</title>
+<html><head><title>Image.Write</title>
 
 </head>
 <body bg="black">
-<script>(function() {
-    // Creates a new canvas element and appends it as a child
-    // to the parent element, and returns the reference to
-    // the newly created canvas element
+<script> (function() {
+    var canvas = document.querySelector('#paint');
+    var ctx = canvas.getContext('2d');
+const color = document.getElementById('color')
+
+    var sketch = document.querySelector('#sketch');
+    var sketch_style = getComputedStyle(sketch);
+    canvas.width = parseInt(sketch_style.getPropertyValue('width'));
+    canvas.height = parseInt(sketch_style.getPropertyValue('height'));
+
+    var mouse = {x: 0, y: 0};
+    var last_mouse = {x: 0, y: 0};
+
+    /* Mouse Capturing Work */
+    canvas.addEventListener('mousemove', function(e) {
+        last_mouse.x = mouse.x;
+        last_mouse.y = mouse.y;
+
+        mouse.x = e.pageX - this.offsetLeft;
+        mouse.y = e.pageY - this.offsetTop;
+    }, false);
 
 
-    function createCanvas(parent, width, height) {
-        var canvas = {};
-        canvas.node = document.createElement('canvas');
-        canvas.context = canvas.node.getContext('2d');
-        canvas.node.width = width || 800;
-        canvas.node.height = height || 470;
-        parent.appendChild(canvas.node);
-        return canvas;
-    }
+    /* Drawing on Paint App */
+    ctx.lineWidth = 5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = color.value;
 
-    function init(container, width, height, fillColor) {
-        var canvas = createCanvas(container, width, height);
-        var ctx = canvas.context;
-        // define a custom fillCircle method
-        ctx.fillCircle = function(x, y, radius, fillColor) {
-            this.fillStyle = fillColor;
-            this.beginPath();
-            this.moveTo(x, y);
-            this.arc(x, y, radius, 0, Math.PI * 2, false);
-            this.fill();
-        };
-        ctx.clearTo = function(fillColor) {
-            ctx.fillStyle = fillColor;
-            ctx.fillRect(0, 0, width, height);
-        };
-        ctx.clearTo(fillColor || "#ddd");
+    canvas.addEventListener('mousedown', function(e) {
+        canvas.addEventListener('mousemove', onPaint, false);
+    }, false);
 
-        // bind mouse events
-        canvas.node.onmousemove = function(e) {
-            if (!canvas.isDrawing) {
-               return;
-            }
-            var x = e.pageX - this.offsetLeft;
-            var y = e.pageY - this.offsetTop;
-            var radius = 10; // or whatever
-            var fillColor = '#ff0000';
-            ctx.fillCircle(x, y, radius, fillColor);
-        };
-        canvas.node.onmousedown = function(e) {
-            canvas.isDrawing = true;
-        };
-        canvas.node.onmouseup = function(e) {
-            canvas.isDrawing = false;
-        };
-    }
+    canvas.addEventListener('mouseup', function() {
+        canvas.removeEventListener('mousemove', onPaint, false);
+    }, false);
 
-    var container = document.getElementById('canvas');
-    init(container, 200, 200, '#ddd');
+    var onPaint = function() {
+        ctx.beginPath();
+        ctx.moveTo(last_mouse.x, last_mouse.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.closePath();
+        ctx.stroke();
+    };
 
-})();</script>
-<div id="canvas"></div>
+}());</script>
+<div id="sketch">
+    <canvas id="paint" width="800" height="470"></canvas>
+</div>
 <button id="imprt" style="text-align:right;left:860px;position:absolute;bottom:460px;">Import</button>
 <button id="export" style="left:850px;position:absolute;bottom:430px;" onclick="">Save File</button>
-<footer style="font-family:monospace;text-align:center;">
+<input id="color" type="color"><footer style="font-family:monospace;text-align:center;">
 <a>File.Write</a>
 <a>Video.Write</a>
 </footer>
+
 
 </body></html>
