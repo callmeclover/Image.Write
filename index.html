@@ -2,61 +2,18 @@
 
 </head>
 <body bg="black">
-<script> (function() {
-    var canvas = document.querySelector('#paint');
-    var ctx = canvas.getContext('2d');
-const color = document.getElementById('color')
-
-    var sketch = document.querySelector('#sketch');
-    var sketch_style = getComputedStyle(sketch);
-    canvas.width = parseInt(sketch_style.getPropertyValue('width'));
-    canvas.height = parseInt(sketch_style.getPropertyValue('height'));
-
-    var mouse = {x: 0, y: 0};
-    var last_mouse = {x: 0, y: 0};
-
-    /* Mouse Capturing Work */
-    canvas.addEventListener('mousemove', function(e) {
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-
-        mouse.x = e.pageX - this.offsetLeft;
-        mouse.y = e.pageY - this.offsetTop;
-    }, false);
-
-
-    /* Drawing on Paint App */
-    ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = color.value;
-
-    canvas.addEventListener('mousedown', function(e) {
-        canvas.addEventListener('mousemove', onPaint, false);
-    }, false);
-
-    canvas.addEventListener('mouseup', function() {
-        canvas.removeEventListener('mousemove', onPaint, false);
-    }, false);
-
-    var onPaint = function() {
-        ctx.beginPath();
-        ctx.moveTo(last_mouse.x, last_mouse.y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.closePath();
-        ctx.stroke();
-    };
-
-}());</script>
+<script src="js.js"></script>
 <div id="sketch">
-    <canvas id="paint" width="800" height="470"></canvas>
+    <canvas id="paint" width="691" height="470"></canvas>
 </div>
 <button id="imprt" style="text-align:right;left:860px;position:absolute;bottom:460px;">Import</button>
 <button id="export" style="left:850px;position:absolute;bottom:430px;" onclick="">Save File</button>
-<input id="color" type="color"><footer style="font-family:monospace;text-align:center;">
+<input id="color" type="color" onchange="        var ctx = canvas.getContext('2d');
+    ctx.strokeStyle = color.value"><footer style="font-family:monospace;text-align:center;">
 <a>File.Write</a>
 <a>Video.Write</a>
 </footer>
+
 
 
 </body></html>
