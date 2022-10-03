@@ -1,46 +1,48 @@
- (function() {
-    var canvas = document.querySelector('#paint');
-    var ctx = canvas.getContext('2d');
-const color = document.getElementById('color')
+var canvasx = $(canvas).offset().left;
+var canvasy = $(canvas).offset().top;
+var last_mousex = last_mousey = 0;
+var mousex = mousey = 0;
+var mousedown = false;
+var tooltype = 'draw';
 
-    var sketch = document.querySelector('#sketch');
-    var sketch_style = getComputedStyle(sketch);
-    canvas.width = parseInt(sketch_style.getPropertyValue('width'));
-    canvas.height = parseInt(sketch_style.getPropertyValue('height'));
+//Mousedown
+$(canvas).on('mousedown', function(e) {
+    last_mousex = mousex = parseInt(e.clientX-canvasx);
+	last_mousey = mousey = parseInt(e.clientY-canvasy);
+    mousedown = true;
+});
 
-    var mouse = {x: 0, y: 0};
-    var last_mouse = {x: 0, y: 0};
+//Mouseup
+$(canvas).on('mouseup', function(e) {
+    mousedown = false;
+});
 
-    /* Mouse Capturing Work */
-    canvas.addEventListener('mousemove', function(e) {
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-
-        mouse.x = e.pageX - this.offsetLeft;
-        mouse.y = e.pageY - this.offsetTop;
-    }, false);
-
-
-    /* Drawing on Paint App */
-    ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = color.value;
-
-    canvas.addEventListener('mousedown', function(e) {
-        canvas.addEventListener('mousemove', onPaint, false);
-    }, false);
-
-    canvas.addEventListener('mouseup', function() {
-        canvas.removeEventListener('mousemove', onPaint, false);
-    }, false);
-
-    var onPaint = function() {
+//Mousemove
+$(canvas).on('mousemove', function(e) {
+    mousex = parseInt(e.clientX-canvasx);
+    mousey = parseInt(e.clientY-canvasy);
+    if(mousedown) {
         ctx.beginPath();
-        ctx.moveTo(last_mouse.x, last_mouse.y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.closePath();
+        if(tooltype=='draw') {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 3;
+        } else {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.lineWidth = 10;
+        }
+        ctx.moveTo(last_mousex,last_mousey);
+        ctx.lineTo(mousex,mousey);
+        ctx.lineJoin = ctx.lineCap = 'round';
         ctx.stroke();
-    };
+    }
+    last_mousex = mousex;
+    last_mousey = mousey;
+    //Output
+    $('#output').html('current: '+mousex+', '+mousey+'<br/>last: '+last_mousex+', '+last_mousey+'<br/>mousedown: '+mousedown);
+});
 
-}());
+//Use draw|erase
+use_tool = function(tool) {
+    tooltype = tool; //update
+}
