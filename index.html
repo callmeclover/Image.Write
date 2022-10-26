@@ -1,19 +1,15 @@
-<html><head><title>Image.Write</title>
+<html class=""><head></head><body><canvas id="canvas" style="width:500px;height:500px;border: 2px solid black;"></canvas><button onclick="async function saveFile() {
+var canvas = document.getElementById('canvas');
+let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
-</head>
-<body bg="black">
-<script src="js.js"></script>
-<div id="sketch">
-    <canvas id="paint" width="691" height="470"></canvas>
-</div>
-<button id="imprt" style="text-align:right;left:860px;position:absolute;bottom:460px;">Import</button>
-<button id="export" style="left:850px;position:absolute;bottom:430px;" onclick="">Save File</button>
-<input id="color" type="color" onchange="        var ctx = canvas.getContext('2d');
-    ctx.strokeStyle = color.value"><footer style="font-family:monospace;text-align:center;">
-<a>File.Write</a>
-<a>Video.Write</a>
-</footer>
+  const newHandle = await window.showSaveFilePicker();
 
+  // create a FileSystemWritableFileStream to write to
+  const writableStream = await newHandle.createWritable();
 
+  // write our file
+  await writableStream.write(blob);
 
-</body></html>
+  // close the file and write the contents to disk.
+  await writableStream.close();
+}">save</button></body></html>
