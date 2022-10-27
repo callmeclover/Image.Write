@@ -1,63 +1,9 @@
-<html class=""><head></head><body style="margin: 0px;"><script>
-const color = document.getElementById('color')
-const canvas = document.getElementById('canvas')
-(function() {
-    var canvas = document.querySelector('#paint');
-    var ctx = canvas.getContext('2d');
-const color = document.getElementById('color')
-
-    var mouse = {x: 0, y: 0};
-    var last_mouse = {x: 0, y: 0};
-
-    /* Mouse Capturing Work */
-    canvas.addEventListener('mousemove', function(e) {
-        last_mouse.x = mouse.x;
-        last_mouse.y = mouse.y;
-
-        mouse.x = e.pageX - this.offsetLeft;
-        mouse.y = e.pageY - this.offsetTop;
-    }, false);
-
-
-    /* Drawing on Paint App */
-    ctx.lineWidth = 5;
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = color.value;
-
-    canvas.addEventListener('mousedown', function(e) {
-        canvas.addEventListener('mousemove', onPaint, false);
-    }, false);
-
-    canvas.addEventListener('mouseup', function() {
-        canvas.removeEventListener('mousemove', onPaint, false);
-    }, false);
-
-    var onPaint = function() {
-        ctx.beginPath();
-        ctx.moveTo(last_mouse.x, last_mouse.y);
-        ctx.lineTo(mouse.x, mouse.y);
-        ctx.closePath();
-        ctx.stroke();
-    };
-
-}());
-</script>
-<button onclick="async function saveFile() {
-var canvas = document.getElementById('canvas');
-let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-
-  const newHandle = await window.showSaveFilePicker();
-
-  // create a FileSystemWritableFileStream to write to
-  const writableStream = await newHandle.createWritable();
-
-  // write our file
-  await writableStream.write(blob);
-
-  // close the file and write the contents to disk.
-  await writableStream.close();
-}">save</button>
-<input type="color" id="color"><canvas id="canvas" style="width: 500px; height: 500px; border: 2px solid black; position: fixed;" width="716" height="488" onclick="draw()"></canvas>
-
-</body></html>
+<html>
+<head>
+    <script src="js.js"></script>
+    </head>
+<body onload="init()">
+<p>Below you can draw:</p>
+<canvas id="can" width="750" height="1050" style="position:absolute;">Below you can write:</canvas>
+</body>
+</html>
