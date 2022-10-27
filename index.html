@@ -1,4 +1,52 @@
-<html class=""><head></head><body><canvas id="canvas" style="width:500px;height:500px;border: 2px solid black;"></canvas><button onclick="async function saveFile() {
+<html class=""><head></head><body style="margin: 0px;"><script>
+const color = document.getElementById('color')
+const canvas = document.getElementById('canvas')
+document.body.appendChild(canvas);
+
+// some hotfixes... ( ≖_≖)
+document.body.style.margin = 0;
+canvas.style.position = 'fixed';
+
+// get canvas 2D context and set him correct size
+var ctx = canvas.getContext('2d');
+resize();
+
+// last known position
+var pos = { x: 0, y: 0 };
+
+window.addEventListener('resize', resize);
+document.addEventListener('mousemove', draw);
+document.addEventListener('mousedown', setPosition);
+document.addEventListener('mouseenter', setPosition);
+
+// new position from mouse event
+function setPosition(e) {
+  pos.x = e.clientX;
+  pos.y = e.clientY;
+}
+
+// resize canvas
+function resize() {
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+}
+
+function draw(e) {
+  // mouse left button must be pressed
+  if (e.buttons !== 1) return;
+
+  ctx.beginPath(); // begin
+
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.moveTo(pos.x, pos.y); // from
+  setPosition(e);
+  ctx.lineTo(pos.x, pos.y); // to
+
+  ctx.stroke(); // draw it!
+}
+</script>
+<button onclick="async function saveFile() {
 var canvas = document.getElementById('canvas');
 let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
@@ -12,4 +60,7 @@ let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
   // close the file and write the contents to disk.
   await writableStream.close();
-}">save</button></body></html>
+}">save</button>
+<input type="color" id="color" onchange="const canvas = document.getElementById('canvas'); const color = document.getElementById('color'); const ctx = canvas.getContext('2d');   ctx.strokeStyle = color.value;
+"><canvas id="canvas" style="width: 500px; height: 500px; border: 2px solid black; position: fixed;" width="716" height="488" onclick="draw()"></canvas>
+</body></html>
