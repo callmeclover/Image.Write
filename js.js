@@ -1,48 +1,69 @@
-var canvasx = $(canvas).offset().left;
-var canvasy = $(canvas).offset().top;
-var last_mousex = last_mousey = 0;
-var mousex = mousey = 0;
-var mousedown = false;
-var tooltype = 'draw';
-
-//Mousedown
-$(canvas).on('mousedown', function(e) {
-    last_mousex = mousex = parseInt(e.clientX-canvasx);
-	last_mousey = mousey = parseInt(e.clientY-canvasy);
-    mousedown = true;
-});
-
-//Mouseup
-$(canvas).on('mouseup', function(e) {
-    mousedown = false;
-});
-
-//Mousemove
-$(canvas).on('mousemove', function(e) {
-    mousex = parseInt(e.clientX-canvasx);
-    mousey = parseInt(e.clientY-canvasy);
-    if(mousedown) {
-        ctx.beginPath();
-        if(tooltype=='draw') {
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 3;
-        } else {
-            ctx.globalCompositeOperation = 'destination-out';
-            ctx.lineWidth = 10;
-        }
-        ctx.moveTo(last_mousex,last_mousey);
-        ctx.lineTo(mousex,mousey);
-        ctx.lineJoin = ctx.lineCap = 'round';
-        ctx.stroke();
+    var canvas, ctx, flag = false,
+        prevX = 0,
+        currX = 0,
+        prevY = 0,
+        currY = 0,
+        dot_flag = false;
+const color = document.getElementById('color')
+    var y = 3;
+    
+    function init() {
+        canvas = document.getElementById('can');
+        ctx = canvas.getContext("2d");
+        w = canvas.width;
+        h = canvas.height;
+    
+        canvas.addEventListener("mousemove", function (e) {
+            findxy('move', e)
+        }, false);
+        canvas.addEventListener("mousedown", function (e) {
+            findxy('down', e)
+        }, false);
+        canvas.addEventListener("mouseup", function (e) {
+            findxy('up', e)
+        }, false);
+        canvas.addEventListener("mouseout", function (e) {
+            findxy('out', e)
+        }, false);
     }
-    last_mousex = mousex;
-    last_mousey = mousey;
-    //Output
-    $('#output').html('current: '+mousex+', '+mousey+'<br/>last: '+last_mousex+', '+last_mousey+'<br/>mousedown: '+mousedown);
-});
-
-//Use draw|erase
-use_tool = function(tool) {
-    tooltype = tool; //update
-}
+ 
+    function draw() {
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.lineTo(currX, currY);
+        ctx.strokeStyle = color.value;
+        ctx.lineWidth = y;
+        ctx.stroke();
+        ctx.closePath();
+    }
+   
+    function findxy(res, e) {
+        if (res == 'down') {
+            prevX = currX;
+            prevY = currY;
+            currX = e.clientX - canvas.getBoundingClientRect().left;
+            currY = e.clientY - canvas.getBoundingClientRect().top;
+    
+            flag = true;
+            dot_flag = true;
+            if (dot_flag) {
+                ctx.beginPath();
+                ctx.fillStyle = color.value;
+                ctx.fillRect(currX, currY, 2, 2);
+                ctx.closePath();
+                dot_flag = false;
+            }
+        }
+        if (res == 'up' || res == "out") {
+            flag = false;
+        }
+        if (res == 'move') {
+            if (flag) {
+                prevX = currX;
+                prevY = currY;
+                currX = e.clientX - canvas.getBoundingClientRect().left;
+                currY = e.clientY - canvas.getBoundingClientRect().top;
+                draw();
+            }
+        }
+    }
