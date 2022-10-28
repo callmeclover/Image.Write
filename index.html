@@ -1,7 +1,9 @@
 <html><head>
     
     </head>
-<body><script>    var canvas, ctx, flag = false,
+<body><script> 
+const color = document.getElementById('color')
+   var canvas, ctx, flag = false,
         prevX = 0,
         currX = 0,
         prevY = 0,
@@ -35,7 +37,7 @@
         ctx.beginPath();
         ctx.moveTo(prevX, prevY);
         ctx.lineTo(currX, currY);
-        ctx.strokeStyle = x;
+        ctx.strokeStyle = color.value;
         ctx.lineWidth = y;
         ctx.stroke();
         ctx.closePath();
